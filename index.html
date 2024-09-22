@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動畫布程式</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        canvas {
+            border: 1px solid black;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 1. 程式標題 -->
+<h1>互動畫布程式</h1>
+
+<!-- 2. 程式功能描述 -->
+<p>按下數字 1 到 7 可切換顏色 (紅、橙、黃、綠、藍、靛、紫)。按住空白鍵可以切換為橡皮擦。</p>
+
+<!-- 3. 互動的canvas -->
+<canvas id="myCanvas" width="600" height="400"></canvas>
+
+<script>
+    // 取得 canvas 和繪圖上下文
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 顏色對應：1 到 7 對應紅、橙、黃、綠、藍、靛、紫
+    const colors = {
+        1: '#FF0000', // 紅
+        2: '#FFA500', // 橙
+        3: '#FFFF00', // 黃
+        4: '#008000', // 綠
+        5: '#0000FF', // 藍
+        6: '#4B0082', // 靛
+        7: '#EE82EE'  // 紫
+    };
+
+    // 初始設定
+    let drawing = false;
+    let currentColor = '#000000'; // 預設黑色
+    let isEraser = false; // 是否為橡皮擦模式
+
+    // 當滑鼠按下時開始繪圖
+    canvas.addEventListener('mousedown', function(e) {
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX, e.offsetY);
+    });
+
+    // 當滑鼠移動時繼續繪圖
+    canvas.addEventListener('mousemove', function(e) {
+        if (drawing) {
+            ctx.strokeStyle = isEraser ? '#FFFFFF' : currentColor;
+            ctx.lineWidth = isEraser ? 20 : 3; // 橡皮擦更粗一點
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        }
+    });
+
+    // 當滑鼠放開時停止繪圖
+    canvas.addEventListener('mouseup', function() {
+        drawing = false;
+    });
+
+    // 當滑鼠移出畫布時停止繪圖
+    canvas.addEventListener('mouseout', function() {
+        drawing = false;
+    });
+
+    // 監聽鍵盤事件來更改顏色或啟動橡皮擦
+    document.addEventListener('keydown', function(e) {
+        const key = e.key;
+
+        // 若按下數字 1 到 7，切換對應顏色
+        if (colors[key]) {
+            currentColor = colors[key];
+            isEraser = false; // 確保不是橡皮擦模式
+        }
+
+        // 按住空白鍵進入橡皮擦模式
+        if (key === ' ') {
+            isEraser = true;
+        }
+    });
+
+    // 當放開空白鍵時，結束橡皮擦模式
+    document.addEventListener('keyup', function(e) {
+        if (e.key === ' ') {
+            isEraser = false;
+        }
+    });
+</script>
+
+</body>
+</html>
